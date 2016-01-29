@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "cocos2d.h"
+#include "Options.h"
 
 Player::Player(isi::Game & game) : Character(), game(game)
 {
@@ -11,6 +12,7 @@ bool Player::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos
 	this->spawnPoint = sprite->getPosition();
 	ellipseWidth = cocos2d::RandomHelper::random_real(10.0f, 30.0f);
 	ellipseHeight = cocos2d::RandomHelper::random_real(10.0f, 30.0f);
+
 	return true;
 }
 
@@ -28,7 +30,9 @@ void Player::update(float delta)
 		timePassed += delta;
 
 		// Rotating in bot direction
-		Bot* bot = game.getEnemies()[0];
+		Bot* bot =	nullptr;
+		std::vector<Bot*>& activeEnemies = game.getActiveEnemies();
+		if (activeEnemies.size() > 0) bot = activeEnemies[0];
 		if (bot)
 		{
 			cocos2d::Vec2 vectorToBot(bot->getPosition() - getPosition());
@@ -38,7 +42,10 @@ void Player::update(float delta)
 		}
 
 		// Shooting (all the time for now)
-		shoot();
+		if (isi::Options::getInstance().trainedNetwork == isi::Options::SEARCHING_NEURAL_NETWORK)
+		{
+			shoot();
+		}
 	}
 }
 

@@ -19,6 +19,8 @@ bool Character::init(std::string spritePath, int hp, BulletPool & bulletPool, co
 
 	setPosition(position.x, position.y);
 
+	active = true;
+
 	this->speed = 1.5f;
 	this->hp = hp;
 	this->bulletPool = &bulletPool;
@@ -87,6 +89,6 @@ void Character::decreaseHp(int hpToDecrease)
 	if (!isAlive())
 	{
 		hp = 0;
-		removeFromParentAndCleanup(true);
+		deactivate();
 	}
 }

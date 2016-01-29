@@ -46,6 +46,7 @@ namespace isi
 		cocos2d::TMXTiledMap * getTileMap() const { return tileMap; }
 		Player & getPlayer() { return *player; }
 		std::vector<Bot*> getEnemies() { return enemies; }
+		std::vector<Bot*> getActiveEnemies();
 
 		BulletPool * getBulletPool() { return &bulletPool; }
 

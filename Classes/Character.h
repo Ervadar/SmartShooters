@@ -10,7 +10,7 @@ private:
 	float shootTimer;
 	float timeBetweenShots = 1.0f;
 
-	float rayCastLength = 150.0f;
+	float rayCastLength = 100.0f;
 
 	BulletPool * bulletPool;
 

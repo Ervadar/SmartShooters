@@ -10,6 +10,7 @@ public:
 	Neuron(int inputCount);
 	Neuron(std::vector<double>& weights);
 
+	void initWeights(std::vector<double> weights);
 	std::vector<double> getWeights() const { return weights; }
 	int getInputCount() const { return inputCount; }
 };

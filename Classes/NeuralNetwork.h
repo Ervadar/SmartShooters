@@ -3,8 +3,13 @@
 #include <vector>
 #include "NeuronLayer.h"
 
+/*
+Class representing a Neural Network.
+It is initializing its neurons with random weights on construction.
+*/
 class NeuralNetwork
 {
+
 private:
 	std::vector<NeuronLayer> neuronLayers;
 	int layerCount;

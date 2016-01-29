@@ -3,6 +3,7 @@
 
 class Genome
 {
+public:
 	std::vector<double> weights;
 	double fitness;
 

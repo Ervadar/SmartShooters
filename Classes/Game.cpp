@@ -79,7 +79,15 @@ bool isi::Game::init(bool trainingGame)
 	TMXObjectGroup * enemySpawnPoints = tileMap->getObjectGroup("EnemySpawnPoints");
 	CCASSERT(NULL != enemySpawnPoints, "EnemySpawnPoints group not found");
 	int enemySpawnPointCount = enemySpawnPoints->getObjects().size();
-	int enemyCount = isi::Options::getInstance().genomesPerInstance;
+	int enemyCount;
+	if (trainingGame)
+	{
+		enemyCount = isi::Options::getInstance().searchingTrainBotCount;
+	}
+	else
+	{
+		enemyCount = isi::Options::getInstance().enemyCount;
+	}
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		auto enemySpawnPoint = enemySpawnPoints->getObject("enemySpawnPoint" + std::to_string(RandomHelper::random_int(1, enemySpawnPointCount)));
@@ -89,12 +97,6 @@ bool isi::Game::init(bool trainingGame)
 		enemy->init("enemy.png", 75, bulletPool, position);
 		enemies.push_back(enemy);
 		addChild(enemy, 1);
-	}
-
-	// If the game is training game, set player waypoints
-	if (trainingGame)
-	{
-		
 	}
 
 	// Contact listener
@@ -109,13 +111,6 @@ bool isi::Game::init(bool trainingGame)
 
 void isi::Game::update(float delta)
 {
-	for (Bot * enemy : enemies)
-	{
-		if (!enemy->isAlive()) continue;
-
-		enemy->update(delta);
-	}
-
 	if (getAliveEnemiesCount() == 0 || !player->isAlive())
 	{
 		// Finish game
@@ -179,6 +174,15 @@ void isi::Game::move(Character & character, cocos2d::Vec2 direction)
 	float y = sprite->getPosition().y + character.getSpeed() * direction.y;
 	sprite->setPosition(x, y);
 	character.updateHUDposition();
+}
+
+std::vector<Bot*> isi::Game::getActiveEnemies()
+{
+	std::vector<Bot*> activeEnemies;
+	for (Bot* bot : enemies)
+		if (bot->isActive()) activeEnemies.push_back(bot);
+
+	return activeEnemies;
 }
 
 std::vector<cocos2d::PhysicsBody*> isi::Game::getAllPhysicsBodies()

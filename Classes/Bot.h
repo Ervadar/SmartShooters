@@ -7,6 +7,7 @@
 #include "Options.h"
 #include "Sensor.h"
 #include "Character.h"
+#include "Genome.h"
 #include <vector>
 
 namespace isi { class Game; }
@@ -36,6 +37,10 @@ private:
 	float viewRange;
 	float fightingCircleRadius;
 
+	// Training
+	int fitness;
+	float timeBeingTrained;
+
 	// Debug
 	cocos2d::DrawNode* sensorsDrawNode;
 	std::vector<cocos2d::Label*> sensorDebugLabels;
@@ -54,4 +59,8 @@ public:
 
 	NeuralNetwork* getActiveNeuralNetwork() const { return activeNeuralNetwork; }
 	cocos2d::DrawNode* getSensorDrawNode() const { return sensorsDrawNode; }
+
+	int getFitness() { return fitness; }
+	float getTimeBeingTrained() { return timeBeingTrained; }
+	Genome getGenomeFromNeuralNetwork();
 };

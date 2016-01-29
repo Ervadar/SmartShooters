@@ -11,8 +11,8 @@ searchingNeuralNetwork(isi::Options::getInstance().hiddenLayerCount),
 fightingNeuralNetwork(isi::Options::getInstance().hiddenLayerCount),
 activeNeuralNetwork(&searchingNeuralNetwork),
 fieldOfView(100.0f),
-viewRange(300.0f),
-fightingCircleRadius(300.0f),
+viewRange(250.0f),
+fightingCircleRadius(150.0f),
 angleToLastSeenPlayerPos(0.0f),
 state(searching)
 {
@@ -43,6 +43,13 @@ state(searching)
 	debugInfoLabel = cocos2d::Label::createWithTTF("", "fonts/small_pixel.ttf", 10);
 	debugInfoLabel->setPosition(cocos2d::Vec2(35, 35));
 	characterHUD->addChild(debugInfoLabel, 1);
+
+	// Training
+	if (game.isTrainingGame())
+	{
+		fitness = 0;
+		timeBeingTrained = 0.0f;
+	}
 }
 
 Bot::~Bot()
@@ -60,6 +67,7 @@ bool Bot::initNeuralNetworksRandomly()
 
 void Bot::update(float delta)
 {
+	CCLOG("TO JEEES TO JEEEST");
 	this->Character::update(delta);
 
 	auto scene = getScene();
@@ -143,7 +151,16 @@ void Bot::update(float delta)
 
 	// DEBUG
 	drawDebugInfo();
+
+	// Training
+	if (game.isTrainingGame())
+	{
+		timeBeingTrained += delta;
+
+		fitness = timeBeingTrained;
+	}
 }
+
 
 bool Bot::isPlayerSeen()
 {
@@ -214,4 +231,9 @@ void Bot::drawDebugInfo()
 		else debugInfoString = "fighting";
 		debugInfoLabel->setString(debugInfoString);
 	}
+}
+
+Genome Bot::getGenomeFromNeuralNetwork()
+{
+	return Genome();
 }

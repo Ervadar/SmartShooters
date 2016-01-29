@@ -10,6 +10,7 @@ protected:
 
 	// Entity's parameters
 	float speed;
+	bool active;
 
 public:
 	static const int TAG_BULLET = 0;
@@ -34,4 +35,8 @@ public:
 	void setSpeed(float speed) { this->speed = speed; }
 	const float getMaxSpeed() { return 1.0f; }
 	const float getMaxRotationSpeed() { return 1.0f; }
+
+	virtual void activate();
+	virtual void deactivate();
+	bool isActive() { return active; }
 };

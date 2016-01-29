@@ -13,3 +13,11 @@ Neuron::Neuron(std::vector<double>& weights)
 	this->weights = weights;
 	inputCount = weights.size();
 }
+
+void Neuron::initWeights(std::vector<double> weights)
+{
+	for (int i = 0; i < this->inputCount; ++i)
+	{
+		this->weights[i] = weights[i];
+	}
+}
