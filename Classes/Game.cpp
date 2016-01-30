@@ -13,7 +13,7 @@ isi::Game::~Game()
 	for (auto it = enemies.begin(); it != enemies.end(); ++it)
 		delete *it;
 
-	delete player;
+	enemies.clear();
 }
 
 bool isi::Game::init(bool trainingGame)
@@ -109,6 +109,21 @@ bool isi::Game::init(bool trainingGame)
     return true;
 }
 
+void isi::Game::restart()
+{
+	// restart player
+	Vec2 newPlayerPosition = getRandomObjCoordsFromMapLayer("PlayerSpawnPoints", "playerSpawnPoint");
+	player->initState(newPlayerPosition, 200);
+
+	// restart enemy
+	for (Bot* enemy : enemies)
+	{
+		Vec2 newEnemyPosition = getRandomObjCoordsFromMapLayer("EnemySpawnPoints", "enemySpawnPoint");
+		enemy->initState(newEnemyPosition, 75);
+		if (trainingGame) enemy->initTrainingState();
+	}
+}
+
 void isi::Game::update(float delta)
 {
 	if (getAliveEnemiesCount() == 0 || !player->isAlive())
@@ -160,6 +175,16 @@ int isi::Game::getAliveEnemiesCount()
 	return aliveEnemiesCount;
 }
 
+cocos2d::Vec2 isi::Game::getRandomObjCoordsFromMapLayer(std::string objectGroupName, std::string objectNamePrefix)
+{
+	TMXObjectGroup * points = tileMap->getObjectGroup(objectGroupName);
+	int pointCounts = points->getObjects().size();
+	int pointIndex = cocos2d::RandomHelper::random_int(1, pointCounts);
+	auto point = points->getObject(objectNamePrefix + std::to_string(pointIndex));
+	Vec2 toReturn = Vec2(point["x"].asFloat(), point["y"].asFloat() + tileMap->getTileSize().height / 2 + point["height"].asFloat());
+	return toReturn;
+}
+
 Vec2 isi::Game::tileCoordsFromPosition(Vec2 position)
 {
 	int x = position.x / tileMap->getTileSize().width;
@@ -194,4 +219,18 @@ std::vector<cocos2d::PhysicsBody*> isi::Game::getAllPhysicsBodies()
 	for (auto* bullet : getBulletPool()->getActiveBullets())
 		physicsBodies.push_back(bullet->getSprite()->getPhysicsBody());
 	return physicsBodies;
+}
+
+void isi::Game::pause()
+{
+	paused = true;
+	player->pauseSchedulerAndActions();
+	for (Bot* bot : enemies) bot->pauseSchedulerAndActions();
+}
+
+void isi::Game::unpause()
+{
+	paused = false;
+	player->resumeSchedulerAndActions();
+	for (Bot* bot : enemies) bot->resumeSchedulerAndActions();
 }

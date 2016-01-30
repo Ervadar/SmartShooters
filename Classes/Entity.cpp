@@ -12,7 +12,5 @@ void Entity::activate()
 
 void Entity::deactivate()
 {
-	CCLOG("DI AKTI WEEE");
 	active = false;
-	removeFromParentAndCleanup(true);
 }

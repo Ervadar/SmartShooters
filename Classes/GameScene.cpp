@@ -19,7 +19,6 @@ Scene* GameScene::createScene()
 
 bool GameScene::init()
 {
-	CCLOG("TO DRUGIE");
     if ( !Layer::init() )
     {
         return false;
@@ -129,7 +128,10 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 		menu->setPosition(Vec2(viewPoint.x, viewPoint.y));
 		menu->setLocalZOrder(1);
 		menu->setEnabled(true);
+		game.pause();
 	}
+
+	if (game.isPaused()) return;
 
 	auto playerPhysicsBody = game.getPlayer().getSprite()->getPhysicsBody();
 	auto playerSpeed = game.getPlayer().getSpeed();
@@ -169,6 +171,7 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 
 void GameScene::onMouseDown(cocos2d::Event * event)
 {
+	if (game.isPaused()) return;
 	game.getPlayer().shoot();
 }
 
@@ -179,6 +182,9 @@ void GameScene::onMouseMove(Event * event)
 	Vec2 cursorPosition = Vec2(em->getCursorX(), em->getCursorY());
 	Vec2 playerDirection = cursorPosition - windowCenter;
 	crosshairsWindowPosition = cursorPosition;
+
+	if (game.isPaused()) return;
+
 	playerDirection.normalize();
 	Vec2 upVector = Vec2(0, 1);
 	float angleInRadians = atan2f(playerDirection.y, playerDirection.x) - atan2f(upVector.y, upVector.x);
@@ -190,6 +196,7 @@ void GameScene::menuResumeCallback(Ref* pSender)
 {
 	menu->setLocalZOrder(-1);
 	menu->setEnabled(false);
+	game.unpause();
 }
 
 void GameScene::menuQuitGameCallback(Ref* pSender)

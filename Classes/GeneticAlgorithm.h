@@ -9,7 +9,7 @@
 class GeneticAlgorithm
 {
 private:
-	isi::Game * game;
+	isi::Game game;
 
 	bool running;
 	int trainedNetwork;
@@ -19,10 +19,15 @@ private:
 	int timeToSearch;
 
 public:
+	~GeneticAlgorithm();
+
 	void init();
 	void update(float delta);
 
-	isi::Game* getGame() { return game; }
+	isi::Game* getGame() { return &game; }
 	void setRunning(bool running) { this->running = running; }
 	bool isRunning() { return running; }
+
+	void pause();
+	void unpause();
 };

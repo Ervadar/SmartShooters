@@ -16,22 +16,25 @@ bool Character::init(std::string spritePath, int hp, BulletPool & bulletPool, co
 	physicsBody->setContactTestBitmask(0x0000000D);
 	sprite->setPhysicsBody(physicsBody);
 	addChild(sprite, 1);
-
-	setPosition(position.x, position.y);
-
-	active = true;
-
-	this->speed = 1.5f;
-	this->hp = hp;
 	this->bulletPool = &bulletPool;
+	this->speed = 1.5f;
 
-	hpLabel = cocos2d::Label::createWithTTF(std::to_string(hp), "fonts/small_pixel.ttf", 10);
+	initState(position, hp);
+
+	hpLabel = cocos2d::Label::createWithTTF("", "fonts/small_pixel.ttf", 10);
 	updateHUDposition();
 	characterHUD->addChild(hpLabel, 1);
 	
 	scheduleUpdate();
 
 	return true;
+}
+
+void Character::initState(cocos2d::Vec2 position, int hp)
+{
+	active = true;
+	setPosition(position.x, position.y);
+	this->hp = hp;
 }
 
 void Character::update(float delta)
@@ -85,10 +88,13 @@ void Character::updateHUDposition()
 
 void Character::decreaseHp(int hpToDecrease)
 {
+	CCLOG("Need to decrease hp: %d, got %d", hpToDecrease, hp);
 	hp -= hpToDecrease;
+	CCLOG("After %d", hp);
 	if (!isAlive())
 	{
 		hp = 0;
 		deactivate();
+		removeFromParentAndCleanup(true);
 	}
 }

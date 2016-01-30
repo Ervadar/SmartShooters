@@ -22,7 +22,7 @@ private:
 	enum State {searching, fighting};
 	State state;
 
-	// Game pointer (for neural networks)
+	// Game pointer
 	isi::Game& game;
 
 	// Neural network inputs
@@ -63,4 +63,6 @@ public:
 	int getFitness() { return fitness; }
 	float getTimeBeingTrained() { return timeBeingTrained; }
 	Genome getGenomeFromNeuralNetwork();
+
+	void initTrainingState();
 };

@@ -1,4 +1,5 @@
 #include "TrainBotsScene.h"
+#include "MainMenuScene.h"
 
 USING_NS_CC;
 
@@ -30,22 +31,33 @@ bool TrainBotsScene::init()
 	povCharacter = game->getActiveEnemies()[0];
 
 	// Create navigation panel
-	Vector<MenuItem*> menuItems;
-	auto label1 = Label::createWithTTF("Previous", "fonts/slkscr.ttf", 24);
-	auto button1 = MenuItemLabel::create(label1, CC_CALLBACK_0(TrainBotsScene::switchToCharacter, this, -1));
-	menuItems.pushBack(button1);
-	auto label2 = Label::createWithTTF("Next", "fonts/slkscr.ttf", 24);
-	auto button2 = MenuItemLabel::create(label2, CC_CALLBACK_0(TrainBotsScene::switchToCharacter, this, 1));
-	menuItems.pushBack(button2);
-
-	navigationPanel = Menu::createWithArray(menuItems);
+	Vector<MenuItem*> navItems;
+	navItems.pushBack(MenuItemLabel::create(Label::createWithTTF("Previous", "fonts/slkscr.ttf", 24),
+											CC_CALLBACK_0(TrainBotsScene::switchToCharacter, this, -1) ));
+	navItems.pushBack(MenuItemLabel::create(Label::createWithTTF("Next", "fonts/slkscr.ttf", 24),
+											CC_CALLBACK_0(TrainBotsScene::switchToCharacter, this, 1) ));
+	navigationPanel = Menu::createWithArray(navItems);
 	navigationPanel->alignItemsHorizontallyWithPadding(15);
 	addChild(navigationPanel, 2);
 
 	// Listeners
 	keyboardListener = EventListenerKeyboard::create();
 	keyboardListener->onKeyPressed = CC_CALLBACK_2(TrainBotsScene::onKeyPressed, this);
+	keyboardListener->onKeyReleased = CC_CALLBACK_2(TrainBotsScene::onKeyReleased, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+
+	// Menu
+	Vector<MenuItem*> menuItems;
+	menuItems.pushBack(MenuItemLabel::create(Label::createWithTTF("Resume", "fonts/slkscr.ttf", 24),
+											 CC_CALLBACK_1(TrainBotsScene::menuResumeCallback, this) ));
+	menuItems.pushBack(MenuItemLabel::create(Label::createWithTTF("Save last generation", "fonts/slkscr.ttf", 24),
+											 CC_CALLBACK_1(TrainBotsScene::saveLastGeneration, this) ));
+	menuItems.pushBack(MenuItemLabel::create(Label::createWithTTF("Quit", "fonts/slkscr.ttf", 24),
+											 CC_CALLBACK_1(TrainBotsScene::menuQuitGameCallback, this) ));
+	menu = Menu::createWithArray(menuItems);
+	menu->alignItemsVertically();
+	menu->setEnabled(false);
+	this->addChild(menu, -1);
 
 	scheduleUpdate();
     
@@ -54,7 +66,6 @@ bool TrainBotsScene::init()
 
 void TrainBotsScene::update(float delta)
 {
-	if (paused) return;
 	geneticAlgorithm.update(delta);
 	updateCameraPosition();
 	updateHUD();
@@ -105,8 +116,36 @@ void TrainBotsScene::updateHUD()
 								viewPoint.y + winSize.y / 2 - infoLabel->getContentSize().height / 2));
 }
 
+void TrainBotsScene::menuResumeCallback(Ref * pSender)
+{
+	menu->setLocalZOrder(-1);
+	menu->setEnabled(false);
+	geneticAlgorithm.unpause();
+}
+
+void TrainBotsScene::saveLastGeneration(Ref * pSender)
+{
+}
+
+void TrainBotsScene::menuQuitGameCallback(cocos2d::Ref * pSender)
+{
+	auto director = Director::getInstance();
+	removeChild(geneticAlgorithm.getGame());
+	director->getOpenGLView()->setCursorVisible(true);
+	director->replaceScene(MainMenuScene::createScene());
+}
+
 void TrainBotsScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event * event)
 {
+	if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE)
+	{
+		Vec2 viewPoint = getScene()->getDefaultCamera()->getPosition();
+		menu->setPosition(Vec2(viewPoint.x, viewPoint.y));
+		menu->setLocalZOrder(1);
+		menu->setEnabled(true);
+		geneticAlgorithm.pause();
+	}
+
 	if (keyCode == EventKeyboard::KeyCode::KEY_F1)
 	{
 		getScene()->getPhysicsWorld()->setDebugDrawMask(

@@ -29,17 +29,22 @@ namespace isi
 
 		bool trainingGame;
 
+		bool paused = false;
+
 
 	public:
 		Game();
 		~Game();
 		virtual bool init(bool trainingGame);
 		void update(float delta);
+		void restart();
 
 		bool onContactBegin(cocos2d::PhysicsContact& contact);
 		void bulletCollisionWithBody(Bullet * bullet, cocos2d::PhysicsBody * body);
 
 		int getAliveEnemiesCount();
+
+		cocos2d::Vec2 getRandomObjCoordsFromMapLayer(std::string objectGroupName, std::string objectNamePrefix);
 
 		cocos2d::Vec2 tileCoordsFromPosition(cocos2d::Vec2 position);
 		void move(Character & character, cocos2d::Vec2 direction);
@@ -52,6 +57,10 @@ namespace isi
 
 		std::vector<cocos2d::PhysicsBody*> getAllPhysicsBodies();
 		bool isTrainingGame() { return trainingGame; }
+
+		void pause();
+		void unpause();
+		bool isPaused() { return paused; }
 	};
 
 };

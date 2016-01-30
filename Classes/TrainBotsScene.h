@@ -7,8 +7,6 @@
 class TrainBotsScene : public cocos2d::Layer
 {
 private:
-	// General
-	bool paused = false;
 
 	// Genetic algorithm
 	GeneticAlgorithm geneticAlgorithm;
@@ -24,9 +22,13 @@ private:
 	// Listeners
 	cocos2d::EventListenerKeyboard* keyboardListener;
 
+	// Menu
+	cocos2d::Menu * menu;
+
 	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
 
 public:
+
     static cocos2d::Scene* createScene();
 
     virtual bool init();
@@ -37,6 +39,11 @@ public:
 	void updateCameraPosition();
 
 	void updateHUD();
+
+	// a selector callback
+	void menuResumeCallback(Ref* pSender);
+	void saveLastGeneration(Ref* pSender);
+	void menuQuitGameCallback(cocos2d::Ref* pSender);
 
     // implement the "static create()" method manually
     CREATE_FUNC(TrainBotsScene);

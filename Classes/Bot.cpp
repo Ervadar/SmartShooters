@@ -47,8 +47,7 @@ state(searching)
 	// Training
 	if (game.isTrainingGame())
 	{
-		fitness = 0;
-		timeBeingTrained = 0.0f;
+		initTrainingState();
 	}
 }
 
@@ -67,7 +66,6 @@ bool Bot::initNeuralNetworksRandomly()
 
 void Bot::update(float delta)
 {
-	CCLOG("TO JEEES TO JEEEST");
 	this->Character::update(delta);
 
 	auto scene = getScene();
@@ -236,4 +234,10 @@ void Bot::drawDebugInfo()
 Genome Bot::getGenomeFromNeuralNetwork()
 {
 	return Genome();
+}
+
+void Bot::initTrainingState()
+{
+	fitness = 0;
+	timeBeingTrained = 0.0f;
 }

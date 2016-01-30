@@ -1,12 +1,15 @@
 #include "GeneticAlgorithm.h"
 
+GeneticAlgorithm::~GeneticAlgorithm()
+{
+}
+
 void GeneticAlgorithm::init()
 {
 	// Create game instances
 	auto& options = isi::Options::getInstance();
 
-	game = new isi::Game();
-	game->init(true);
+	game.init(true);
 
 	// Load weights from file and override default random initialization
 	// TODO: ma byæ tylko if (options.lnn) -> jeœli true to prze³adowujemy losowe wagi (wczytane konstruktorami) podanymi
@@ -34,20 +37,30 @@ void GeneticAlgorithm::update(float delta)
 	{
 		if (genomes.size() < generationSize)
 		{
-			CCLOG("SIZE < GS, active enemeies %d", game->getActiveEnemies().size());
-			for (Bot* bot : game->getActiveEnemies())
+			if (game.getActiveEnemies().size() == 0)
 			{
+				game.restart();
+			}
+
+			for (Bot* bot : game.getActiveEnemies())
+			{
+				CCLOG("Bot time trained: %f | Time to search: %f", bot->getTimeBeingTrained(), (float)timeToSearch);
 				if (bot->getTimeBeingTrained() > timeToSearch || bot->isPlayerSeen())
 				{
 					genomes.push_back(bot->getGenomeFromNeuralNetwork());
 					bot->deactivate();
 				}
 			}
-			// Jesli liczba botow aktywnych == 0
-				// Zrespawnuj na nowo gracza w losowym miejscu i kolejn¹ partiê botów
+				
 		}
 		else
 		{
+			std::vector<Genome> newGeneration;
+			while (newGeneration.size() < generationSize)
+			{
+				newGeneration.push_back(Genome());
+			}
+			genomes.clear();
 			// Dokopoki nie stworzono nowej generacji
 				// Wybieramy 2 genomy z poprzedniej generacji przez Roullette Wheel Selection
 				// Krzy¿ówka (CROSSOVER RATE)
@@ -57,4 +70,16 @@ void GeneticAlgorithm::update(float delta)
 		}
 	}
 
+}
+
+void GeneticAlgorithm::pause()
+{
+	game.pause();
+	setRunning(false);
+}
+
+void GeneticAlgorithm::unpause()
+{
+	game.unpause();
+	setRunning(true);
 }
