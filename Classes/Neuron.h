@@ -3,7 +3,7 @@
 
 class Neuron
 {
-private:
+public:
 	std::vector<double> weights;	// Weights with bias weight included
 	int inputCount;					// Input count with bias included
 public:

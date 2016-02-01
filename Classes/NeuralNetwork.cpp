@@ -76,3 +76,63 @@ std::vector<double> NeuralNetwork::getNeuralNetworkWeights()
 				weights.push_back(weight);
 	return weights;
 }
+
+std::vector<int> NeuralNetwork::calculateSplitPoints() const
+{
+	std::vector<int> splitPoints;
+
+	int weightCounter = 0;
+
+	for (NeuronLayer layer : neuronLayers)
+	{
+		for (auto neuron : layer.getNeurons())
+		{
+			for (double weight : neuron.getWeights())
+			{
+				++weightCounter;
+			}
+			splitPoints.push_back(weightCounter - 1);
+		}
+	}
+
+	return splitPoints;
+}
+
+void NeuralNetwork::initWeights(std::vector<double> weights)
+{
+	int inputWeightIndex = 0;
+	for (int layerIdx = 0; layerIdx < neuronLayers.size(); ++layerIdx)
+	{
+		for (int neuronIdx = 0; neuronIdx < neuronLayers[layerIdx].getNeurons().size(); ++neuronIdx)
+		{
+			for (int weightIdx = 0; weightIdx < neuronLayers[layerIdx].getNeurons()[neuronIdx].getWeights().size(); ++weightIdx)
+			{
+				neuronLayers[layerIdx].neurons[neuronIdx].weights[weightIdx] = weights[inputWeightIndex];
+				++inputWeightIndex;
+			}
+		}
+	}
+	//for (NeuronLayer & layer : neuronLayers)
+	//{
+	//	for (Neuron & neuron : layer.getNeurons())
+	//	{
+	//		std::vector<double> neuronWeights = neuron.getWeights();
+	//		for (int i = 0; i < neuronWeights.size(); ++i)
+	//		{
+	//			neuron.setWeight(i, weights[weightIndex]);
+	//			++weightIndex;
+	//		}
+	//	}
+	//}
+}
+
+void NeuralNetwork::initWeightsRandomly()
+{
+	int weightsCount = getNeuralNetworkWeights().size();
+	std::vector<double> randomWeights;
+	for (int i = 0; i < weightsCount; ++i)
+	{
+		randomWeights.push_back(cocos2d::RandomHelper::random_real(-1.0f, 1.0f));
+	}
+	initWeights(randomWeights);
+}

@@ -10,7 +10,7 @@ private:
 	float shootTimer;
 	float timeBetweenShots = 1.0f;
 
-	float rayCastLength = 100.0f;
+	float rayCastLength = 150.0f;
 
 	BulletPool * bulletPool;
 
@@ -22,7 +22,7 @@ protected:
 public:
 	Character();
 	virtual bool init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position);
-	void initState(cocos2d::Vec2 position, int hp);
+	virtual void initState(cocos2d::Vec2 position, int hp);
 	virtual void update(float delta);
 
 	virtual void onCollision();

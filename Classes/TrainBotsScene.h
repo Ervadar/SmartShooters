@@ -38,7 +38,7 @@ public:
 
 	void updateCameraPosition();
 
-	void updateHUD();
+	void updateHUD(float delta);
 
 	// a selector callback
 	void menuResumeCallback(Ref* pSender);

@@ -22,6 +22,7 @@ bool TrainBotsScene::init()
 	geneticAlgorithm.init();
 
 	// Debug labels
+	
 	infoLabel = Label::createWithTTF(" ", "fonts/slkscr.ttf", 14);
 	addChild(infoLabel, 2);
 	
@@ -68,7 +69,7 @@ void TrainBotsScene::update(float delta)
 {
 	geneticAlgorithm.update(delta);
 	updateCameraPosition();
-	updateHUD();
+	updateHUD(delta);
 }
 
 void TrainBotsScene::switchToCharacter(int indexDifference)
@@ -95,14 +96,17 @@ void TrainBotsScene::updateCameraPosition()
 	//updateHUD();
 }
 
-void TrainBotsScene::updateHUD()
+void TrainBotsScene::updateHUD(float delta)
 {
 	Vec2 viewPoint = getScene()->getDefaultCamera()->getPosition();
 	Vec2 winSize = Director::getInstance()->getWinSize();
 	Vec2 navPanelSize = navigationPanel->getContentSize();
 	navigationPanel->setPosition(Vec2(viewPoint.x - winSize.x / 2 + navPanelSize.x / 2, viewPoint.y + winSize.y / 2 - 50));
 
-	std::string infoString = "info";
+	std::string infoString = "F1 - show collision shapes\nF2 - draw debug info\n\n";
+	infoString += "Generation: " + std::to_string(geneticAlgorithm.getGenerationNumber()) + "\n" +
+		"Previous best fitness: " + std::to_string(geneticAlgorithm.getBestFitness()) + "\n"
+		"Experiments done: " + std::to_string(geneticAlgorithm.getGenomeCount()) + "/" + std::to_string(geneticAlgorithm.getGenerationSize()) + "\n";
 	//if (activeCharacterIndex != 0)	// non-player
 	//{
 	//	Bot* activeBot = geneticAlgorithm.getGame()->getEnemies()[activeCharacterIndex - 1];
@@ -125,6 +129,7 @@ void TrainBotsScene::menuResumeCallback(Ref * pSender)
 
 void TrainBotsScene::saveLastGeneration(Ref * pSender)
 {
+	geneticAlgorithm.saveGenerationToFile();
 }
 
 void TrainBotsScene::menuQuitGameCallback(cocos2d::Ref * pSender)

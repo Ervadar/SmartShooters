@@ -38,8 +38,11 @@ private:
 	float fightingCircleRadius;
 
 	// Training
-	int fitness;
+	double fitness;
 	float timeBeingTrained;
+	cocos2d::Vec2 lastPosition;
+	float updateFitnessTime = 0.0f;
+	float rotationChange = 0.0f;
 
 	// Debug
 	cocos2d::DrawNode* sensorsDrawNode;
@@ -49,6 +52,7 @@ private:
 public:
 	Bot(isi::Game& game);
 	~Bot();
+	bool Bot::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position);
 	bool initNeuralNetworksRandomly();
 
 	void update(float delta);
@@ -60,9 +64,10 @@ public:
 	NeuralNetwork* getActiveNeuralNetwork() const { return activeNeuralNetwork; }
 	cocos2d::DrawNode* getSensorDrawNode() const { return sensorsDrawNode; }
 
-	int getFitness() { return fitness; }
+	double getFitness() { return fitness; }
 	float getTimeBeingTrained() { return timeBeingTrained; }
-	Genome getGenomeFromNeuralNetwork();
 
 	void initTrainingState();
+	void updateFitness(float delta);
+	void addFitness(double fitness);
 };

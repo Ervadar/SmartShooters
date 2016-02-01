@@ -17,6 +17,7 @@ private:
 public:
 	Player(isi::Game& game);
 	bool init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position);
+	virtual void initState(cocos2d::Vec2 position, int hp);
 	virtual void update(float delta);
 
 	void shoot();

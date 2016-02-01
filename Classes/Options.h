@@ -28,6 +28,11 @@ namespace isi
 		/* SearchingNetworkTraining */
 		int searchingTrainBotCount;
 		int timeToSearch;
+		int searchingTrainTournamentCompetitors;
+		float searchingTrainCrossoverRate;
+		float searchingTrainMutationRate;
+		float searchingTrainMaxPerturbationRate;
+		double searchingTrainInitialFitness;
 
 		/* Neural Networks*/
 		int hiddenLayerCount;

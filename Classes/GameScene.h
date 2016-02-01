@@ -17,6 +17,7 @@ private:
 
 	// Debug labels
 	cocos2d::Label * label;
+	cocos2d::Label * infoLabel;
 
 	// Menu
 	cocos2d::Menu * menu;

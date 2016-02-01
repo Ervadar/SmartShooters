@@ -11,7 +11,7 @@ searchingNeuralNetwork(isi::Options::getInstance().hiddenLayerCount),
 fightingNeuralNetwork(isi::Options::getInstance().hiddenLayerCount),
 activeNeuralNetwork(&searchingNeuralNetwork),
 fieldOfView(100.0f),
-viewRange(250.0f),
+viewRange(250.0f),                
 fightingCircleRadius(150.0f),
 angleToLastSeenPlayerPos(0.0f),
 state(searching)
@@ -21,13 +21,13 @@ state(searching)
 
 	for (auto label : sensorDebugLabels) addChild(label);
 
-	// USUÑ TO I WRZUC DO FUNKCJI ZMIENIAJACEJ STAN SIECI
+	// TO DELETE and move to state changing function
 	searchingSensors.push_back(Sensor(this, -90));
 	searchingSensors.push_back(Sensor(this, -45));
 	searchingSensors.push_back(Sensor(this, 0));
 	searchingSensors.push_back(Sensor(this, 45));
 	searchingSensors.push_back(Sensor(this, 90));
-
+	
 	float angle = 0;
 	for (int i = 0; i < 8; ++i)
 	{
@@ -43,36 +43,40 @@ state(searching)
 	debugInfoLabel = cocos2d::Label::createWithTTF("", "fonts/small_pixel.ttf", 10);
 	debugInfoLabel->setPosition(cocos2d::Vec2(35, 35));
 	characterHUD->addChild(debugInfoLabel, 1);
-
-	// Training
-	if (game.isTrainingGame())
-	{
-		initTrainingState();
-	}
 }
 
 Bot::~Bot()
 {
 }
 
+bool Bot::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position)
+{
+	Character::init(spritePath, hp, bulletPool, position);
+	// Training
+	if (game.isTrainingGame())
+	{
+		initTrainingState();
+	}
+	return true;
+}
+
 bool Bot::initNeuralNetworksRandomly()
 {
-	// placeholder
-	static int i = 0;
-	CCLOG("random network %d\n", i);
-	++i;
+	searchingNeuralNetwork.initWeightsRandomly();
+	fightingNeuralNetwork.initWeightsRandomly();
 	return true;
 }
 
 void Bot::update(float delta)
 {
+	if (!isActive()) return;
 	this->Character::update(delta);
 
 	auto scene = getScene();
 	auto scenePosition = scene->getPosition();
 
 	// BOT STATES
-	if (state == searching)
+	if (state == searching && !game.isTrainingGame())
 	{
 		if (isPlayerSeen())
 		{
@@ -81,7 +85,7 @@ void Bot::update(float delta)
 			activeSensors = &fightingSensors;
 		}
 	}
-	else if (state == fighting)
+	else if (state == fighting && !game.isTrainingGame())
 	{
 		cocos2d::Vec2 distanceToPlayer = game.getPlayer().getPosition() - getPosition();
 		if (distanceToPlayer.getLength() > fightingCircleRadius)
@@ -94,11 +98,10 @@ void Bot::update(float delta)
 
 	for (auto& sensor : *activeSensors) sensor.update(delta);
 	updateHUDposition();
-
 	// 1. Get input from sensors into a vector<double> and scale all to [0; 1]
 	std::vector<double> input;
 	for (auto & sensor : *activeSensors) input.push_back(sensor.getFraction());
-
+	
 	// 1.1 Additional input for fighting neural network
 	if (state == fighting)
 	{
@@ -137,7 +140,8 @@ void Bot::update(float delta)
 	
 	// 3. Interpret output (for each different state)
 	setSpeed(output[0] * getMaxSpeed());
-	setRotation(getRotation() + Utils::denormalizeData(output[1], -1.0f, 1.0f) * getMaxRotationSpeed());
+	rotationChange = Utils::denormalizeData(output[1], -1.0f, 1.0f) * getMaxRotationSpeed();
+	setRotation(getRotation() + rotationChange);
 	if (state == fighting)
 	{
 		if (output[2] > 0.5f) shoot();
@@ -146,7 +150,6 @@ void Bot::update(float delta)
 	// Move the bot
 	cocos2d::Vec2 directionVector = cocos2d::Vec2(0, 1).rotateByAngle(cocos2d::Vec2(0, 0), -MATH_DEG_TO_RAD(getSprite()->getRotation()));
 	move(directionVector);
-
 	// DEBUG
 	drawDebugInfo();
 
@@ -154,9 +157,46 @@ void Bot::update(float delta)
 	if (game.isTrainingGame())
 	{
 		timeBeingTrained += delta;
-
-		fitness = timeBeingTrained;
+		updateFitness(delta);
 	}
+}
+
+void Bot::updateFitness(float delta)
+{	
+	updateFitnessTime += delta;
+
+	if (updateFitnessTime > 2)		// Every second update fitness with passed length in that period
+	{
+		updateFitnessTime = 0.0f;
+
+		cocos2d::Vec2 newPosition = getPosition();
+		int length = (newPosition - lastPosition).length();
+		lastPosition = newPosition;
+
+		fitness += 3*length;
+	}
+
+	if (abs(rotationChange) < 0.5f)	// Each frame improve fitness if rotation is less than certain value
+	{
+		fitness += 1;
+	}
+
+	for (auto & sensor : *activeSensors)
+	{
+		float sensorFraction = sensor.getFraction();
+		//if (sensorFraction < 0.4f)	// Each frame punish the bot if its sensor fraction is lower than some value
+		//{
+		//	addFitness(-10);
+		//}
+		addFitness(-1 * (1.0f - sensorFraction));
+	}
+
+}
+
+void Bot::addFitness(double fitness)
+{
+	this->fitness += fitness;
+	if (this->fitness < 0.0f) this->fitness = 0.0f;
 }
 
 
@@ -196,8 +236,6 @@ void Bot::drawDebugInfo()
 	// DEBUG
 	bool debugInfo = !isi::Options::getInstance().debugInfo;
 	if (sensorsDrawNode) removeChild(sensorsDrawNode);
-	if (!debugInfo)
-		for (int i = 0; i < MAX_SENSOR_COUNT; ++i) sensorDebugLabels[i]->setString("");
 	if (debugInfo)
 	{
 		sensorsDrawNode = cocos2d::DrawNode::create();
@@ -227,17 +265,22 @@ void Bot::drawDebugInfo()
 		std::string debugInfoString;
 		if (activeNeuralNetwork == &searchingNeuralNetwork) debugInfoString = "searching";
 		else debugInfoString = "fighting";
+		if (game.isTrainingGame()) debugInfoString += " " + std::to_string(fitness);
 		debugInfoLabel->setString(debugInfoString);
 	}
-}
-
-Genome Bot::getGenomeFromNeuralNetwork()
-{
-	return Genome();
+	else
+	{
+		if (game.isTrainingGame()) debugInfoLabel->setString("Fitness: " + std::to_string(fitness));
+		for (int i = 0; i < MAX_SENSOR_COUNT; ++i) sensorDebugLabels[i]->setString("");
+	}
 }
 
 void Bot::initTrainingState()
 {
-	fitness = 0;
+	auto options = isi::Options::getInstance();
+	if (options.trainedNetwork == options.SEARCHING_NEURAL_NETWORK) fitness = options.searchingTrainInitialFitness;
+	else fitness = 0;
 	timeBeingTrained = 0.0f;
+	lastPosition = getPosition();
+	updateFitnessTime = 0.0f;
 }

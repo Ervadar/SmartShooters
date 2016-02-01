@@ -119,8 +119,12 @@ void isi::Game::restart()
 	for (Bot* enemy : enemies)
 	{
 		Vec2 newEnemyPosition = getRandomObjCoordsFromMapLayer("EnemySpawnPoints", "enemySpawnPoint");
+		enemy->setVisible(true);
 		enemy->initState(newEnemyPosition, 75);
-		if (trainingGame) enemy->initTrainingState();
+		if (trainingGame)
+		{
+			enemy->initTrainingState();
+		}
 	}
 }
 
@@ -139,7 +143,7 @@ bool isi::Game::onContactBegin(cocos2d::PhysicsContact & contact)
 	auto bodyB = contact.getShapeB()->getBody();
 	int bodyAtag = bodyA->getTag();
 	int bodyBtag = bodyB->getTag();
-	
+
 	// Bullet collisions
 	if (bodyAtag == Entity::TAG_BULLET)
 	{

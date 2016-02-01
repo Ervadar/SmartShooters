@@ -30,4 +30,9 @@ public:
 
 	// Accessors
 	std::vector<double> getNeuralNetworkWeights();
+
+	std::vector<int> calculateSplitPoints() const;
+
+	void initWeights(std::vector<double> weights);
+	void initWeightsRandomly();
 };

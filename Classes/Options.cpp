@@ -24,6 +24,11 @@ void isi::Options::loadOptions()
 	/* SearchingNetworkTraining */
 	searchingTrainBotCount = pt.get<int>("SearchingNetworkTraining.searchingTrainBotCount");
 	timeToSearch = pt.get<int>("SearchingNetworkTraining.timeToSearch");
+	searchingTrainTournamentCompetitors = pt.get<int>("SearchingNetworkTraining.tournamentCompetitors");
+	searchingTrainCrossoverRate = pt.get<float>("SearchingNetworkTraining.crossoverRate");
+	searchingTrainMutationRate = pt.get<float>("SearchingNetworkTraining.mutationRate");
+	searchingTrainMaxPerturbationRate = pt.get<float>("SearchingNetworkTraining.maxPerturbationRate");
+	searchingTrainInitialFitness = pt.get<double>("SearchingNetworkTraining.initialFitness");
 
 	/* Neural Networks*/
 	hiddenLayerCount = pt.get<int>("NeuralNetworks.hiddenLayerCount");

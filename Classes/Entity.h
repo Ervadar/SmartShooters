@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "Utils.h"
 
 class Entity : public cocos2d::Node
 {
@@ -27,6 +28,7 @@ public:
 	void setRotation(float rotation)
 	{
 		if (rotation > 360.0f) rotation -= 360.0f;
+		else if (rotation < 0.0f) rotation += 360.0f;
 		sprite->setRotation(rotation);
 	}
 	float getRotation() const { return sprite->getRotation(); }
@@ -34,7 +36,7 @@ public:
 	float getSpeed() const { return speed; }
 	void setSpeed(float speed) { this->speed = speed; }
 	const float getMaxSpeed() { return 1.0f; }
-	const float getMaxRotationSpeed() { return 1.0f; }
+	const float getMaxRotationSpeed() { return 2.0f; }
 
 	virtual void activate();
 	virtual void deactivate();

@@ -16,6 +16,13 @@ bool Player::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos
 	return true;
 }
 
+void Player::initState(cocos2d::Vec2 position, int hp)
+{
+	Character::initState(position, hp);
+	ellipseWidth = cocos2d::RandomHelper::random_real(10.0f, 30.0f);
+	ellipseHeight = cocos2d::RandomHelper::random_real(10.0f, 30.0f);
+}
+
 void Player::update(float delta)
 {
 	Character::update(delta);
@@ -39,12 +46,6 @@ void Player::update(float delta)
 			float angleToBot = MATH_RAD_TO_DEG(atan2f(1.0f, 0.0f) - atan2f(vectorToBot.y, vectorToBot.x));
 			if (angleToBot < 0.0f) angleToBot = (90.0f + angleToBot) + 270.0f;	// transform from -90..270 to 0..360
 			setRotation(angleToBot);
-		}
-
-		// Shooting (all the time for now)
-		if (isi::Options::getInstance().trainedNetwork == isi::Options::SEARCHING_NEURAL_NETWORK)
-		{
-			shoot();
 		}
 	}
 }

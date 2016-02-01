@@ -3,7 +3,7 @@
 
 class NeuronLayer
 {
-private:
+public:
 	std::vector<Neuron> neurons;
 	int neuronCount;
 

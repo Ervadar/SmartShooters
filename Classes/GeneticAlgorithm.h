@@ -16,7 +16,24 @@ private:
 
 	std::vector<Genome> genomes;		// Encoded neural network
 	int generationSize;
-	int timeToSearch;
+	std::vector<Genome> newGeneration;
+	int newGenerationIdx = 0;			// Index for traversing newGeneration
+	int experimentTime;
+
+	int tournamentCompetitors;
+	float crossoverRate;
+	float mutationRate;
+	float maxPerturbationRate;
+
+	double bestFitness;
+	int fittestGenomeId;
+
+	std::vector<int> networkSplitPoints;
+
+	int generationNumber;
+
+	double averageFitness;
+	double worstFitness;
 
 public:
 	~GeneticAlgorithm();
@@ -28,6 +45,23 @@ public:
 	void setRunning(bool running) { this->running = running; }
 	bool isRunning() { return running; }
 
+	void applySigmaScaling(std::vector<Genome>& genomes);
+
+	Genome & rouletteWheelSelection();
+	Genome & tournamentSelection();
+	void crossover(Genome& mother, Genome& father, Genome& baby1, Genome& baby2);
+	void mutate(Genome& genome);
+
 	void pause();
 	void unpause();
+
+	void calculateBestWorstAverage();
+
+	int getGenerationNumber() { return generationNumber; }
+	int getExperimentTime() { return experimentTime; }
+	int getGenomeCount() const { return genomes.size(); }
+	int getGenerationSize() const { return generationSize; }
+	int getBestFitness() const { return bestFitness; }
+
+	void saveGenerationToFile();
 };

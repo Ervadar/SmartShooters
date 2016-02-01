@@ -65,6 +65,10 @@ bool GameScene::init()
 	crosshairs->setAnchorPoint(Vec2(0.5f, 0.5f));
 	addChild(crosshairs, 10);
 
+	// Info label
+	infoLabel = Label::createWithTTF(" ", "fonts/slkscr.ttf", 14);
+	addChild(infoLabel, 2);
+
 	// Music
 	CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 	
@@ -112,11 +116,10 @@ void GameScene::updateHUD()
 	Vec2 winSize = Director::getInstance()->getWinSize();
 	Vec2 position = game.getPlayer().getSprite()->getPosition();
 	Vec2 tileCoords = game.tileCoordsFromPosition(position);
-	std::string debugString = std::to_string(position.x) + " " +
-		std::to_string(position.y) + " " +
-		std::to_string(game.getAliveEnemiesCount());
-	label->setString(debugString);
-	label->setPosition(Vec2(viewPoint.x - winSize.x / 2 + label->getContentSize().width / 2, viewPoint.y + winSize.y / 2 - label->getContentSize().height));
+	std::string infoString = "F1 - show collision shapes\nF2 - draw debug info\nWASD to move\nLeft-click to shoot\n";
+	infoLabel->setString(infoString);
+	infoLabel->setPosition(Vec2(viewPoint.x - winSize.x / 2 + infoLabel->getContentSize().width / 2,
+								viewPoint.y + winSize.y / 2 - infoLabel->getContentSize().height / 2));
 	crosshairs->setPosition(Vec2(viewPoint.x - winSize.x / 2, viewPoint.y - winSize.y / 2) + crosshairsWindowPosition);
 }
 
