@@ -3,6 +3,9 @@
 #include "Entity.h"
 #include "Bullet.h"
 
+/*
+An entity which is a character (can move and shoot)
+*/
 class Character : public Entity
 {
 private:

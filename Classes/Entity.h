@@ -36,7 +36,7 @@ public:
 	float getSpeed() const { return speed; }
 	void setSpeed(float speed) { this->speed = speed; }
 	const float getMaxSpeed() { return 1.0f; }
-	const float getMaxRotationSpeed() { return 2.0f; }
+	const float getMaxRotationSpeed() { return 10.0f; }
 
 	virtual void activate();
 	virtual void deactivate();

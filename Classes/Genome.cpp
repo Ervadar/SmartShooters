@@ -10,5 +10,5 @@ Genome::Genome(std::vector<double> weights, double fitness) : weights(weights), 
 
 bool Genome::operator<(const Genome & genome)
 {
-	return (fitness < genome.fitness);
+	return (fitness > genome.fitness);
 }

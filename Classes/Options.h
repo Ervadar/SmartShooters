@@ -8,6 +8,9 @@ namespace isi
 {
 	using boost::property_tree::ptree;
 
+	/*
+	Class for options
+	*/
 	class Options
 	{
 	public:
@@ -32,6 +35,7 @@ namespace isi
 		float searchingTrainCrossoverRate;
 		float searchingTrainMutationRate;
 		float searchingTrainMaxPerturbationRate;
+		int searchingTrainEliteGenomes;
 		double searchingTrainInitialFitness;
 
 		/* Neural Networks*/

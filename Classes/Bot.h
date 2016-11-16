@@ -12,6 +12,9 @@
 
 namespace isi { class Game; }
 
+/*
+Class representing a bot - enemy which player fights
+*/
 class Bot : public Character
 {
 private:
@@ -62,6 +65,7 @@ public:
 	void drawDebugInfo();
 
 	NeuralNetwork* getActiveNeuralNetwork() const { return activeNeuralNetwork; }
+	SearchingNeuralNetwork& getSearchingNeuralNetwork() { return searchingNeuralNetwork; }
 	cocos2d::DrawNode* getSensorDrawNode() const { return sensorsDrawNode; }
 
 	double getFitness() { return fitness; }

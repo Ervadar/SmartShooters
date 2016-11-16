@@ -4,6 +4,9 @@
 
 namespace isi { class Game; }
 
+/*
+Class representing the player
+*/
 class Player : public Character
 {
 private:

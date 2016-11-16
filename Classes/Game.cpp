@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Options.h"
+#include <fstream>
 
 USING_NS_CC;
 
@@ -10,10 +11,7 @@ isi::Game::Game() : player(new Player(*this))
 
 isi::Game::~Game()
 {
-	for (auto it = enemies.begin(); it != enemies.end(); ++it)
-		delete *it;
 
-	enemies.clear();
 }
 
 bool isi::Game::init(bool trainingGame)
@@ -99,6 +97,19 @@ bool isi::Game::init(bool trainingGame)
 		addChild(enemy, 1);
 	}
 
+	// If not training game
+	if (!isTrainingGame())
+	{
+		// Load neural network generation from file
+		loadNeuralNetworkGeneration();
+		// Load random neural network for each bot
+		for (Bot* bot : enemies)
+		{
+			int neuralNetworkIdx = cocos2d::RandomHelper::random_int((unsigned int)0, loadedNeuralNetworkGeneration.size() - 1);
+			bot->getSearchingNeuralNetwork().initWeights(loadedNeuralNetworkGeneration[neuralNetworkIdx]);
+		}
+	}
+
 	// Contact listener
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(Game::onContactBegin, this);
@@ -114,7 +125,8 @@ void isi::Game::restart()
 	// restart player
 	Vec2 newPlayerPosition = getRandomObjCoordsFromMapLayer("PlayerSpawnPoints", "playerSpawnPoint");
 	player->initState(newPlayerPosition, 200);
-
+	player->setVisible(true);
+	
 	// restart enemy
 	for (Bot* enemy : enemies)
 	{
@@ -124,6 +136,11 @@ void isi::Game::restart()
 		if (trainingGame)
 		{
 			enemy->initTrainingState();
+		}
+		else // Load neural network weights from generation
+		{
+			int neuralNetworkIdx = cocos2d::RandomHelper::random_int((unsigned int)0, loadedNeuralNetworkGeneration.size() - 1);
+			enemy->getSearchingNeuralNetwork().initWeights(loadedNeuralNetworkGeneration[neuralNetworkIdx]);
 		}
 	}
 }
@@ -237,4 +254,26 @@ void isi::Game::unpause()
 	paused = false;
 	player->resumeSchedulerAndActions();
 	for (Bot* bot : enemies) bot->resumeSchedulerAndActions();
+}
+
+void isi::Game::loadNeuralNetworkGeneration()
+{
+	int generationSize = isi::Options::getInstance().generationSize;
+	int neuralNetworkWeightCount = enemies[0]->getSearchingNeuralNetwork().getNeuralNetworkWeights().size();
+	std::ifstream generationFile("searching_generation.txt", std::ifstream::binary);
+	if (generationFile)
+	{
+		for (int i = 0; i < generationSize; ++i)
+		{
+			std::vector<double> singleNetwork;
+			for (int j = 0; j < neuralNetworkWeightCount; ++j)
+			{
+				double weight;
+				generationFile >> weight;
+				singleNetwork.push_back(weight);
+			}
+			loadedNeuralNetworkGeneration.push_back(singleNetwork);
+		}
+	}
+	generationFile.close();
 }

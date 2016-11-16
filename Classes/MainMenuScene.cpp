@@ -1,7 +1,7 @@
 #include "MainMenuScene.h"
 #include "GameScene.h"
 #include "TrainBotsScene.h"
-#include "SimpleAudioEngine.h"
+#include <SimpleAudioEngine.h>
 #include "Options.h"
 
 
@@ -36,9 +36,9 @@ bool MainMenuScene::init()
    auto label2 = Label::createWithTTF("Train bots", "fonts/slkscr.ttf", 24);
    auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(MainMenuScene::trainBotsCallback, this));
    menuItems.pushBack(menuItem2);
-   auto label3 = Label::createWithTTF("Options", "fonts/slkscr.ttf", 24);
-   auto menuItem3 = MenuItemLabel::create(label3, CC_CALLBACK_1(MainMenuScene::optionsCallback, this));
-   menuItems.pushBack(menuItem3);
+   //auto label3 = Label::createWithTTF("Options", "fonts/slkscr.ttf", 24);
+   //auto menuItem3 = MenuItemLabel::create(label3, CC_CALLBACK_1(MainMenuScene::optionsCallback, this));
+   //menuItems.pushBack(menuItem3);
    auto label4 = Label::createWithTTF("Quit", "fonts/slkscr.ttf", 24);
    auto menuItem4 = MenuItemLabel::create(label4, CC_CALLBACK_1(MainMenuScene::quitCallback, this));
    menuItems.pushBack(menuItem4);
@@ -46,9 +46,6 @@ bool MainMenuScene::init()
    auto menu = Menu::createWithArray(menuItems);
    menu->alignItemsVertically();
    this->addChild(menu, 1);
-
-   // Music
-   //CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("music/menu.mp3", true);
 
    return true;
 }

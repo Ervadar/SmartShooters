@@ -1,6 +1,7 @@
 #include "GeneticAlgorithm.h"
 #include "Utils.h"
 #include <fstream>
+#include <algorithm>
 
 GeneticAlgorithm::~GeneticAlgorithm()
 {
@@ -27,6 +28,7 @@ void GeneticAlgorithm::init()
 	crossoverRate = options.searchingTrainCrossoverRate;
 	mutationRate = options.searchingTrainMutationRate;
 	maxPerturbationRate = options.searchingTrainMaxPerturbationRate;
+	eliteGenomes = options.searchingTrainEliteGenomes;
 	bestFitness = options.searchingTrainInitialFitness;
 
 	networkSplitPoints = game.getEnemies()[0]->getActiveNeuralNetwork()->calculateSplitPoints();
@@ -82,10 +84,6 @@ void GeneticAlgorithm::update(float delta)
 				{
 					int botFitness = bot->getFitness();
 					genomes.push_back(Genome(bot->getActiveNeuralNetwork()->getNeuralNetworkWeights(), botFitness));
-					if (botFitness > bestFitness)
-					{
-						fittestGenomeId = genomes.size()-1;
-					}
 					bot->deactivate();
 					bot->setVisible(false);
 				}
@@ -99,8 +97,12 @@ void GeneticAlgorithm::update(float delta)
 
 			calculateBestWorstAverage();
 
-			// Elitism (1 genome always pushed)
-			newGeneration.push_back(genomes[fittestGenomeId]);
+			// Elitism - sort by fitness descending, then choose eliteGenomes genomes for elitism
+			std::sort(genomes.begin(), genomes.end());
+			for (int i = 0; i < eliteGenomes; ++i)
+			{
+				newGeneration.push_back(genomes[i]);
+			}
 
 			// Sigma scaling	// can use rank scaling instead
 			applySigmaScaling(genomes);

@@ -22,11 +22,13 @@ state(searching)
 	for (auto label : sensorDebugLabels) addChild(label);
 
 	// TO DELETE and move to state changing function
-	searchingSensors.push_back(Sensor(this, -90));
-	searchingSensors.push_back(Sensor(this, -45));
+	searchingSensors.push_back(Sensor(this, -75));
+	searchingSensors.push_back(Sensor(this, -50));
+	searchingSensors.push_back(Sensor(this, -25));
 	searchingSensors.push_back(Sensor(this, 0));
-	searchingSensors.push_back(Sensor(this, 45));
-	searchingSensors.push_back(Sensor(this, 90));
+	searchingSensors.push_back(Sensor(this, 25));
+	searchingSensors.push_back(Sensor(this, 50));
+	searchingSensors.push_back(Sensor(this, 75));
 	
 	float angle = 0;
 	for (int i = 0; i < 8; ++i)
@@ -81,14 +83,14 @@ void Bot::update(float delta)
 		if (isPlayerSeen())
 		{
 			state = fighting;
-			activeNeuralNetwork = &fightingNeuralNetwork;
-			activeSensors = &fightingSensors;
+			//activeNeuralNetwork = &fightingNeuralNetwork;
+			//activeSensors = &fightingSensors;
 		}
 	}
 	else if (state == fighting && !game.isTrainingGame())
 	{
 		cocos2d::Vec2 distanceToPlayer = game.getPlayer().getPosition() - getPosition();
-		if (distanceToPlayer.getLength() > fightingCircleRadius)
+		if (distanceToPlayer.getLength() > fightingCircleRadius && !isPlayerSeen())
 		{
 			state = searching;
 			activeNeuralNetwork = &searchingNeuralNetwork;
@@ -103,53 +105,67 @@ void Bot::update(float delta)
 	for (auto & sensor : *activeSensors) input.push_back(sensor.getFraction());
 	
 	// 1.1 Additional input for fighting neural network
-	if (state == fighting)
-	{
-		float angleToClosestBullet = 0.0f;
-		float distanceToClosestBullet = viewRange;
-		float angleToPlayer = 0.0f;
-		Bullet* closestBullet = nullptr;
-		for (Bullet* bullet : game.getBulletPool()->getActiveBullets())
-		{
-			if (bullet->isPlayersBullet())
-			{
-				float distanceToBullet = (bullet->getSprite()->getPosition() - getPosition()).length();
-				if (distanceToBullet < distanceToClosestBullet) closestBullet = bullet;
-			}
-		}
-		if (closestBullet)
-		{
-			cocos2d::Vec2 vectorToClosestBullet(closestBullet->getPosition() - getPosition());
-			distanceToClosestBullet = vectorToClosestBullet.length() / viewRange;	// transform to 0..1
-			cocos2d::Vec2 directionVector = cocos2d::Vec2(0, 1).rotateByAngle(cocos2d::Vec2(0, 0), -MATH_DEG_TO_RAD(getRotation()));
-			angleToClosestBullet = MATH_RAD_TO_DEG(atan2f(directionVector.y, directionVector.x) - atan2f(vectorToClosestBullet.y, vectorToClosestBullet.x));
-			if (angleToClosestBullet < 0.0f) angleToClosestBullet = (90.0f + angleToClosestBullet) + 270.0f;	// transform from -90..270 to 0..360
-			angleToClosestBullet = angleToClosestBullet / 360.0f;	// transform to 0..1
-			cocos2d::Vec2 vectorToPlayer(game.getPlayer().getPosition() - getPosition());
-			angleToPlayer = MATH_RAD_TO_DEG(atan2f(directionVector.y, directionVector.x) - atan2f(vectorToPlayer.y, vectorToPlayer.x));
-			if (angleToPlayer < 0.0f) angleToPlayer = (90.0f + angleToPlayer) + 270.0f;	// transform from -90..270 to 0..360
-			angleToPlayer = angleToPlayer / 360.0f;	// transform to 0..1
-		}
-		input.push_back(angleToClosestBullet);
-		input.push_back(distanceToClosestBullet);
-		input.push_back(angleToPlayer);
-	}
+	//if (state == fighting)
+	//{
+	//	float angleToClosestBullet = 0.0f;
+	//	float distanceToClosestBullet = viewRange;
+	//	float angleToPlayer = 0.0f;
+	//	Bullet* closestBullet = nullptr;
+	//	for (Bullet* bullet : game.getBulletPool()->getActiveBullets())
+	//	{
+	//		if (bullet->isPlayersBullet())
+	//		{
+	//			float distanceToBullet = (bullet->getSprite()->getPosition() - getPosition()).length();
+	//			if (distanceToBullet < distanceToClosestBullet) closestBullet = bullet;
+	//		}
+	//	}
+	//	if (closestBullet)
+	//	{
+	//		cocos2d::Vec2 vectorToClosestBullet(closestBullet->getPosition() - getPosition());
+	//		distanceToClosestBullet = vectorToClosestBullet.length() / viewRange;	// transform to 0..1
+	//		cocos2d::Vec2 directionVector = cocos2d::Vec2(0, 1).rotateByAngle(cocos2d::Vec2(0, 0), -MATH_DEG_TO_RAD(getRotation()));
+	//		angleToClosestBullet = MATH_RAD_TO_DEG(atan2f(directionVector.y, directionVector.x) - atan2f(vectorToClosestBullet.y, vectorToClosestBullet.x));
+	//		if (angleToClosestBullet < 0.0f) angleToClosestBullet = (90.0f + angleToClosestBullet) + 270.0f;	// transform from -90..270 to 0..360
+	//		angleToClosestBullet = angleToClosestBullet / 360.0f;	// transform to 0..1
+	//		cocos2d::Vec2 vectorToPlayer(game.getPlayer().getPosition() - getPosition());
+	//		angleToPlayer = MATH_RAD_TO_DEG(atan2f(directionVector.y, directionVector.x) - atan2f(vectorToPlayer.y, vectorToPlayer.x));
+	//		if (angleToPlayer < 0.0f) angleToPlayer = (90.0f + angleToPlayer) + 270.0f;	// transform from -90..270 to 0..360
+	//		angleToPlayer = angleToPlayer / 360.0f;	// transform to 0..1
+	//	}
+	//	input.push_back(angleToClosestBullet);
+	//	input.push_back(distanceToClosestBullet);
+	//	input.push_back(angleToPlayer);
+	//}
 	
 	// 2. Get output into vector<double> from getNetworkOutput(input);
-	std::vector<double> output = activeNeuralNetwork->getNetworkOutput(input);
-	
-	// 3. Interpret output (for each different state)
-	setSpeed(output[0] * getMaxSpeed());
-	rotationChange = Utils::denormalizeData(output[1], -1.0f, 1.0f) * getMaxRotationSpeed();
-	setRotation(getRotation() + rotationChange);
-	if (state == fighting)
+	if (state == searching)
 	{
-		if (output[2] > 0.5f) shoot();
+		std::vector<double> output = activeNeuralNetwork->getNetworkOutput(input);
+
+		// 3. Interpret output (for each different state)
+		setSpeed(output[0] * getMaxSpeed());
+		rotationChange = Utils::denormalizeData(output[1], -1.0f, 1.0f) * getMaxRotationSpeed();
+		setRotation(getRotation() + rotationChange);
+		//if (state == fighting)
+		//{
+		//	if (output[2] > 0.5f) shoot();
+		//}
+
+		// Move the bot
+		cocos2d::Vec2 directionVector = cocos2d::Vec2(0, 1).rotateByAngle(cocos2d::Vec2(0, 0), -MATH_DEG_TO_RAD(getSprite()->getRotation()));
+		move(directionVector);
 	}
-	
-	// Move the bot
-	cocos2d::Vec2 directionVector = cocos2d::Vec2(0, 1).rotateByAngle(cocos2d::Vec2(0, 0), -MATH_DEG_TO_RAD(getSprite()->getRotation()));
-	move(directionVector);
+	else if (state == fighting)		// Placeholder fighting behaviour (rotation to player and shooting all the time)
+	{
+		// Rotating in player direction
+		Player& player = game.getPlayer();
+		cocos2d::Vec2 vectorToPlayer(player.getPosition() - getPosition());
+		float angleToPlayer = MATH_RAD_TO_DEG(atan2f(1.0f, 0.0f) - atan2f(vectorToPlayer.y, vectorToPlayer.x));
+		if (angleToPlayer < 0.0f) angleToPlayer = (90.0f + angleToPlayer) + 270.0f;	// transform from -90..270 to 0..360
+		setRotation(angleToPlayer);
+		CCLOG("ROTE: %f", getRotation());
+		shoot();
+	}
 	// DEBUG
 	drawDebugInfo();
 
@@ -165,30 +181,33 @@ void Bot::updateFitness(float delta)
 {	
 	updateFitnessTime += delta;
 
-	if (updateFitnessTime > 2)		// Every second update fitness with passed length in that period
+	if (updateFitnessTime > 3)		// Every second update fitness with passed length in that period
 	{
 		updateFitnessTime = 0.0f;
 
 		cocos2d::Vec2 newPosition = getPosition();
-		int length = (newPosition - lastPosition).length();
+		float length = (newPosition - lastPosition).length();
 		lastPosition = newPosition;
 
-		fitness += 3*length;
+		fitness += 3 * 5 * Utils::normalizeData(length, 0.0f, 36.0f);	// 36.0f, magic number - avg length is close 36 on my machine
 	}
 
 	if (abs(rotationChange) < 0.5f)	// Each frame improve fitness if rotation is less than certain value
 	{
-		fitness += 1;
+		fitness += 1.0f * delta;
 	}
 
-	for (auto & sensor : *activeSensors)
+	for (unsigned int i = 0; i < activeSensors->size(); ++i)
 	{
-		float sensorFraction = sensor.getFraction();
+		float sensorFraction = (*activeSensors)[i].getFraction();
 		//if (sensorFraction < 0.4f)	// Each frame punish the bot if its sensor fraction is lower than some value
 		//{
 		//	addFitness(-10);
 		//}
-		addFitness(-1 * (1.0f - sensorFraction));
+		float penalty = -0.6f;
+		if (i == 1 || i == 3) penalty = -0.9f;
+		if (i == activeSensors->size()/2) penalty = -1.2f;	// 2x bigger penalty for middle sensor
+		if(sensorFraction < 0.7f) addFitness(delta * penalty * (1.0f - sensorFraction));
 	}
 
 }
@@ -214,7 +233,7 @@ bool Bot::isPlayerSeen()
 			cocos2d::PhysicsShape* shape = info.shape;
 			cocos2d::PhysicsShape* botsPhysicsShape = getSprite()->getPhysicsBody()->getFirstShape();
 			cocos2d::PhysicsShape* playerPhysicsShape = game.getPlayer().getSprite()->getPhysicsBody()->getFirstShape();
-			if (info.fraction < fraction && info.shape != botsPhysicsShape)
+			if (info.fraction < fraction && info.shape != botsPhysicsShape && info.shape->getBody()->getTag() != Entity::TAG_BULLET)
 			{
 				if (info.shape == playerPhysicsShape)
 					playerHit = true;
@@ -263,8 +282,8 @@ void Bot::drawDebugInfo()
 		sensorsDrawNode->drawCircle(getPosition(), fightingCircleRadius, 360.0f, 30, false, cocos2d::Color4F::GREEN);
 		// Debug info
 		std::string debugInfoString;
-		if (activeNeuralNetwork == &searchingNeuralNetwork) debugInfoString = "searching";
-		else debugInfoString = "fighting";
+		if (state == searching) debugInfoString = "searching";
+		else if (state == fighting) debugInfoString = "fighting";
 		if (game.isTrainingGame()) debugInfoString += " " + std::to_string(fitness);
 		debugInfoLabel->setString(debugInfoString);
 	}

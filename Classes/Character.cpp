@@ -1,4 +1,5 @@
 #include "Character.h"
+#include <SimpleAudioEngine.h>
 
 Character::Character()
 {
@@ -24,9 +25,8 @@ bool Character::init(std::string spritePath, int hp, BulletPool & bulletPool, co
 	hpLabel = cocos2d::Label::createWithTTF("", "fonts/small_pixel.ttf", 10);
 	updateHUDposition();
 	characterHUD->addChild(hpLabel, 1);
-	
 	scheduleUpdate();
-
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound_effects/shoot.wav");
 	return true;
 }
 
@@ -88,13 +88,13 @@ void Character::updateHUDposition()
 
 void Character::decreaseHp(int hpToDecrease)
 {
-	CCLOG("Need to decrease hp: %d, got %d", hpToDecrease, hp);
 	hp -= hpToDecrease;
-	CCLOG("After %d", hp);
 	if (!isAlive())
 	{
 		hp = 0;
 		deactivate();
-		removeFromParentAndCleanup(true);
+		setVisible(false);
+		setPosition(-10000.0f, -10000.0f);		// Magic disappearing position
+		//removeFromParentAndCleanup(true);
 	}
 }

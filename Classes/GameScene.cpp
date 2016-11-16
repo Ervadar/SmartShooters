@@ -47,6 +47,9 @@ bool GameScene::init()
 	auto label1 = Label::createWithTTF("Resume", "fonts/slkscr.ttf", 24);
 	auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(GameScene::menuResumeCallback, this));
 	menuItems.pushBack(menuItem1);
+
+	menuItems.pushBack(MenuItemLabel::create(Label::createWithTTF("Restart", "fonts/slkscr.ttf", 24), CC_CALLBACK_1(GameScene::menuRestartCallback, this)));
+
 	auto label2 = Label::createWithTTF("Quit", "fonts/slkscr.ttf", 24);
 	auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(GameScene::menuQuitGameCallback, this));
 	menuItems.pushBack(menuItem2);
@@ -86,12 +89,10 @@ void GameScene::update(float delta)
 	updateHUD();
 
 	// Game end condition
-	//if (!game.isRunning())
-	//{
-	//	auto director = Director::getInstance();
-	//	director->getOpenGLView()->setCursorVisible(true);
-	//	director->replaceScene(MainMenuScene::createScene());
-	//}
+	if (game.getActiveEnemies().size() == 0 || !game.getPlayer().isAlive())
+	{
+		game.restart();
+	}
 }
 
 void GameScene::checkHeldKeys()
@@ -199,6 +200,14 @@ void GameScene::menuResumeCallback(Ref* pSender)
 {
 	menu->setLocalZOrder(-1);
 	menu->setEnabled(false);
+	game.unpause();
+}
+
+void GameScene::menuRestartCallback(Ref * pSender)
+{
+	menu->setLocalZOrder(-1);
+	menu->setEnabled(false);
+	game.restart();
 	game.unpause();
 }
 

@@ -10,7 +10,9 @@ class Player;
 
 namespace isi
 {
-
+	/*
+	Class representing game instance
+	*/
 	class Game : public cocos2d::Node
 	{
 	private:
@@ -31,6 +33,8 @@ namespace isi
 
 		bool paused = false;
 
+		// Used generation of neural networks (loaded from file)
+		std::vector<std::vector<double>> loadedNeuralNetworkGeneration;
 
 	public:
 		Game();
@@ -61,6 +65,8 @@ namespace isi
 		void pause();
 		void unpause();
 		bool isPaused() { return paused; }
+
+		void loadNeuralNetworkGeneration();
 	};
 
 };

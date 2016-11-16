@@ -2,6 +2,9 @@
 #include <vector>
 #include <cocos2d.h>
 
+/*
+Class representing bot's genome - neural network weights ina single vector
+*/
 class Genome
 {
 public:
@@ -15,7 +18,6 @@ public:
 
 	void printGenome()
 	{
-		CCLOG("Genome weights:");
 		for (double weight : weights)
 		{
 			CCLOG("%f", weight);

@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 
+/*
+Class representing a single neuron
+*/
 class Neuron
 {
 public:

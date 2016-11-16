@@ -5,6 +5,9 @@
 #define SENSOR_NEURAL_NETWORK 1
 #define SENSOR_VISION 2
 
+/*
+Sensor class, can calculate distance from collidable object
+*/
 class Sensor
 {
 private:

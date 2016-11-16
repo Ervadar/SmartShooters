@@ -6,6 +6,9 @@
 #include "Options.h"
 #include "Genome.h"
 
+/*
+Genetic algorithm class. Contains evolution logic.
+*/
 class GeneticAlgorithm
 {
 private:
@@ -24,9 +27,9 @@ private:
 	float crossoverRate;
 	float mutationRate;
 	float maxPerturbationRate;
+	int eliteGenomes;
 
 	double bestFitness;
-	int fittestGenomeId;
 
 	std::vector<int> networkSplitPoints;
 

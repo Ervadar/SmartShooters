@@ -1,6 +1,9 @@
 #pragma once
 #include "Neuron.h"
 
+/*
+Class representing a neuron layer
+*/
 class NeuronLayer
 {
 public:

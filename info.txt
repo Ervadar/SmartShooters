@@ -1,0 +1,51 @@
+0. WSTÊP
+WA¯NE:
+- Jako, ¿e nieprzygotowane zosta³o œrodowisko treningowe dla sieci neuronowej walcz¹cej bota,
+w obecnej chwili, kiedy przeciwnik znajdzie siê w stanie "fighting" jedyne co robi to 
+obraca siê ca³y czas w kierunku gracza i strzela do niego.
+- Dostarczony plik "searching_generation.txt" zawiera (z powodu braku czasu) generacjê trenowan¹
+w nieaktualny (gorszy) sposób. Generacja ta zawiera i tak ca³kiem niez³e genomy, lecz zaleca siê 
+uruchomienie treningu od pocz¹tku. 
+
+Po uruchomieniu gry, u¿ytkownik ma 2 opcje:
+- rozpoczêcie gry (Play)
+- rozpoczêcie treningu (Train bots)
+
+1. ROZPOCZÊCIE GRY
+Aby gra poprawnie siê rozpoczê³a, w folderze g³ównym musi znajdowaæ siê
+plik "searching_generation.txt". W tym pliku znajduj¹ siê wagi sieci neuronowych
+(jedna sieæ - jedna linia).
+Do pliku "searching_generation.txt" mo¿emy przenosiæ wagi sieci wytrenowane przez program
+i utworzone w folderze sieci neuronowej (np. "searching").
+Nale¿y pamiêtaæ o tym, ¿eby liczba sieci w pliku
+by³a zgodna ze zmienn¹ w pliku konfiguracyjnym (generationSize).
+
+2. ROZPOCZÊCIE TRENINGU
+Podczas trwania treningu, program zapisuje ka¿d¹ wyewoluowan¹ generacjê sieci
+neuronowych do pliku (do folderu searching). Ka¿dy nowy plik ma nazwê "<nr_generacji>.txt"
+
+3. PLIK KONFIGURACYJNY
+Aby program poprawnie dzia³a³, musi mieæ w g³ównym folderze plik "config.ini".
+Poni¿ej znajduje siê krótki opis wa¿niejszych zmiennych w pliku.
+
+[Game]
+enemyCount - liczba przeciwników w rozgrywce
+
+[GeneticAlgorithm]
+generationSize - rozmiar ka¿dej generacji algorytmu genetycznego
+trainedNetwork - nr trenowanej sieci (powinien zostaæ ustawiony na 1 dla sieci szukaj¹cej)
+
+[SearchingNetworkTraining]
+searchingTrainBotCount - liczba botów w jednym eksperymencie treningowym
+timeToSearch - czas trwania jednego eksperymentu treningowego
+tournamentCompetitors - liczba "wybrañ" dla tournament selection
+crossoverRate - prawdopodobieñstwo zajœcia krzy¿ówki
+mutationRate - prawdopodobieñstwo zajœcia mutacji
+maxPerturbationRate - maksymalne odchylenie pojedynczej wagi przy mutacji
+eliteGenomes - liczba najlepszych genomów, które automatycznie przechodz¹ do nowej generacji
+initialFitness - pocz¹tkowy fitness botów
+
+[NeuralNetworks]
+hiddenLayerCount - liczba warstw neuronów ukrytych (powinno zostaæ na 1, ale zmiana na wiêksz¹ liczbê nie powinna zaszkodziæ)
+neuronBias - bias sieci neuronowej (domyœlnie -1, nie zmieniaæ)
+activationResponse - parametr funkcji aktywacji

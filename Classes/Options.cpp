@@ -28,6 +28,7 @@ void isi::Options::loadOptions()
 	searchingTrainCrossoverRate = pt.get<float>("SearchingNetworkTraining.crossoverRate");
 	searchingTrainMutationRate = pt.get<float>("SearchingNetworkTraining.mutationRate");
 	searchingTrainMaxPerturbationRate = pt.get<float>("SearchingNetworkTraining.maxPerturbationRate");
+	searchingTrainEliteGenomes = pt.get<int>("SearchingNetworkTraining.eliteGenomes");
 	searchingTrainInitialFitness = pt.get<double>("SearchingNetworkTraining.initialFitness");
 
 	/* Neural Networks*/

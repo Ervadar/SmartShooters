@@ -3,6 +3,9 @@
 #include "cocos2d.h"
 #include "Entity.h"
 
+/*
+Class representing bullet shot by Characters
+*/
 class Bullet : public Entity
 {
 	friend class BulletPool;
