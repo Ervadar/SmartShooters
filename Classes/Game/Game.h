@@ -39,7 +39,6 @@ namespace isi
 
 	public:
 		Game();
-		~Game();
 		virtual bool init(bool trainingGame);
 		void update(float delta);
 		void restart();

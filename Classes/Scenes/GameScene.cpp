@@ -72,9 +72,6 @@ bool GameScene::init()
 	infoLabel = Label::createWithTTF(" ", "fonts/slkscr.ttf", 14);
 	addChild(infoLabel, 2);
 
-	// Music
-	CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-	
 	scheduleUpdate();
 
     return true;

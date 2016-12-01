@@ -1,5 +1,6 @@
 #include "TrainBotsScene.h"
 #include "MainMenuScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -61,6 +62,9 @@ bool TrainBotsScene::init()
 	this->addChild(menu, -1);
 
 	scheduleUpdate();
+
+	// Stop music
+	CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     
     return true;
 }

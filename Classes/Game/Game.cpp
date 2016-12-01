@@ -9,11 +9,6 @@ isi::Game::Game() : player(new Player(*this))
 
 }
 
-isi::Game::~Game()
-{
-
-}
-
 bool isi::Game::init(bool trainingGame)
 {
 	// Tile map

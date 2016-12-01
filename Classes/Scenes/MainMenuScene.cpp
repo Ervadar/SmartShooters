@@ -47,6 +47,9 @@ bool MainMenuScene::init()
    menu->alignItemsVertically();
    this->addChild(menu, 1);
 
+   // Music
+   CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("music/menu.mp3", true);
+
    return true;
 
 }
