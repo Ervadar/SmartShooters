@@ -54,7 +54,6 @@ private:
 
 public:
 	Bot(isi::Game& game);
-	virtual ~Bot();
 	bool Bot::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position);
 	bool initNeuralNetworksRandomly();
 

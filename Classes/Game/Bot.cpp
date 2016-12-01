@@ -47,11 +47,6 @@ state(searching)
 	characterHUD->addChild(debugInfoLabel, 1);
 }
 
-Bot::~Bot()
-{
-	debugInfoLabel->release();
-}
-
 bool Bot::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position)
 {
 	Character::init(spritePath, hp, bulletPool, position);

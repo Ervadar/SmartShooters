@@ -11,11 +11,7 @@ isi::Game::Game() : player(new Player(*this))
 
 isi::Game::~Game()
 {
-	for (Bot* bot : enemies)
-	{
-		//bot->destroy();
-		//bot->release();
-	}
+
 }
 
 bool isi::Game::init(bool trainingGame)
