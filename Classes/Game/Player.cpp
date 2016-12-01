@@ -38,8 +38,8 @@ void Player::update(float delta)
 
 		// Rotating in bot direction
 		Bot* bot =	nullptr;
-		std::vector<Bot*>& activeEnemies = game.getActiveEnemies();
-		if (activeEnemies.size() > 0) bot = activeEnemies[0];
+		cocos2d::Vector<Bot*>& activeEnemies = game.getActiveEnemies();
+		if (activeEnemies.size() > 0) bot = activeEnemies.at(0);
 		if (bot)
 		{
 			cocos2d::Vec2 vectorToBot(bot->getPosition() - getPosition());

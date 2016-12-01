@@ -35,5 +35,4 @@ void isi::Options::loadOptions()
 	hiddenLayerCount = pt.get<int>("NeuralNetworks.hiddenLayerCount");
 	neuronBias = pt.get<double>("NeuralNetworks.neuronBias");
 	activationResponse = pt.get<double>("NeuralNetworks.activationResponse");
-
 }

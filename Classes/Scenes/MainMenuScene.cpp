@@ -48,6 +48,7 @@ bool MainMenuScene::init()
    this->addChild(menu, 1);
 
    return true;
+
 }
 
 void MainMenuScene::playGameCallback(Ref* pSender)
@@ -68,7 +69,6 @@ void MainMenuScene::trainBotsCallback(Ref* pSender)
 
 void MainMenuScene::optionsCallback(Ref* pSender)
 {
-	CCLOG("opcje");
 }
 
 void MainMenuScene::quitCallback(Ref* pSender)

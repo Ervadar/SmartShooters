@@ -19,6 +19,7 @@ public:
 	static const int TAG_CHARACTER = 2;
 
 	Entity();
+	virtual ~Entity();
 
 	virtual void update(float delta) = 0;
 	virtual void onCollision() = 0;

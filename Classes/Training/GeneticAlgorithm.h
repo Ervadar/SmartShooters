@@ -2,9 +2,9 @@
 
 #include "cocos2d.h"
 #include <vector>
-#include "Game.h"
+#include "Game/Game.h"
 #include "Options.h"
-#include "Genome.h"
+#include "Training/Genome.h"
 
 /*
 Genetic algorithm class. Contains evolution logic.

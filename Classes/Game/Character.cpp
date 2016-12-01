@@ -7,6 +7,10 @@ Character::Character()
 	this->addChild(characterHUD, 2);
 }
 
+Character::~Character()
+{
+}
+
 bool Character::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position)
 {
 	sprite = cocos2d::Sprite::create("sprites/" + spritePath);
@@ -22,11 +26,11 @@ bool Character::init(std::string spritePath, int hp, BulletPool & bulletPool, co
 
 	initState(position, hp);
 
-	hpLabel = cocos2d::Label::createWithTTF("", "fonts/small_pixel.ttf", 10);
+	hpLabel = cocos2d::Label::createWithTTF("", "fonts/small_pixel.TTF", 10);
 	updateHUDposition();
 	characterHUD->addChild(hpLabel, 1);
 	scheduleUpdate();
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound_effects/shoot.wav");
+	//CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound_effects/shoot.wav");
 	return true;
 }
 

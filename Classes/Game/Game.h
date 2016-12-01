@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Bot.h"
 #include "Bullet.h"
+#include <memory>
 #include <vector>
 
 class Player;
@@ -24,10 +25,10 @@ namespace isi
 		BulletPool bulletPool;
 
 		// Player
-		Player * player;
+		std::unique_ptr<Player> player;
 
 		// Enemies
-		std::vector<Bot*> enemies;
+		cocos2d::Vector<Bot*> enemies;
 
 		bool trainingGame;
 
@@ -54,8 +55,8 @@ namespace isi
 		void move(Character & character, cocos2d::Vec2 direction);
 		cocos2d::TMXTiledMap * getTileMap() const { return tileMap; }
 		Player & getPlayer() { return *player; }
-		std::vector<Bot*> getEnemies() { return enemies; }
-		std::vector<Bot*> getActiveEnemies();
+		cocos2d::Vector<Bot*>& getEnemies() { return enemies; }
+		cocos2d::Vector<Bot*> getActiveEnemies();
 
 		BulletPool * getBulletPool() { return &bulletPool; }
 

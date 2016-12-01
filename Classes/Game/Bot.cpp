@@ -49,6 +49,7 @@ state(searching)
 
 Bot::~Bot()
 {
+	debugInfoLabel->release();
 }
 
 bool Bot::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position)
@@ -163,7 +164,6 @@ void Bot::update(float delta)
 		float angleToPlayer = MATH_RAD_TO_DEG(atan2f(1.0f, 0.0f) - atan2f(vectorToPlayer.y, vectorToPlayer.x));
 		if (angleToPlayer < 0.0f) angleToPlayer = (90.0f + angleToPlayer) + 270.0f;	// transform from -90..270 to 0..360
 		setRotation(angleToPlayer);
-		CCLOG("ROTE: %f", getRotation());
 		shoot();
 	}
 	// DEBUG
@@ -177,19 +177,20 @@ void Bot::update(float delta)
 	}
 }
 
+
 void Bot::updateFitness(float delta)
 {	
 	updateFitnessTime += delta;
 
-	if (updateFitnessTime > 3)		// Every second update fitness with passed length in that period
+	if (updateFitnessTime > 0.5f)		// Every second update fitness with passed length in that period
 	{
 		updateFitnessTime = 0.0f;
 
 		cocos2d::Vec2 newPosition = getPosition();
 		float length = (newPosition - lastPosition).length();
 		lastPosition = newPosition;
-
-		fitness += 3 * 5 * Utils::normalizeData(length, 0.0f, 36.0f);	// 36.0f, magic number - avg length is close 36 on my machine
+		fitness += 3 * 5 * length * delta;
+		//fitness += 3 * 5 * Utils::normalizeData(length, 0.0f, 36.0f);	// 36.0f, magic number - avg length is close 36 on my machine
 	}
 
 	if (abs(rotationChange) < 0.5f)	// Each frame improve fitness if rotation is less than certain value

@@ -1,5 +1,5 @@
 #include "AppDelegate.h"
-#include "MainMenuScene.h"
+#include "Scenes/MainMenuScene.h"
 #include "Options.h"
 
 USING_NS_CC;

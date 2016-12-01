@@ -1,8 +1,8 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "Game.h"
-#include "GeneticAlgorithm.h"
+#include "Game/Game.h"
+#include "Training/GeneticAlgorithm.h"
 
 class TrainBotsScene : public cocos2d::Layer
 {

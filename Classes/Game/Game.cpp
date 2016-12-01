@@ -11,7 +11,11 @@ isi::Game::Game() : player(new Player(*this))
 
 isi::Game::~Game()
 {
-
+	for (Bot* bot : enemies)
+	{
+		//bot->destroy();
+		//bot->release();
+	}
 }
 
 bool isi::Game::init(bool trainingGame)
@@ -71,7 +75,7 @@ bool isi::Game::init(bool trainingGame)
 	Vec2 position = Vec2(playerSpawnPoint["x"].asFloat(),
 						 playerSpawnPoint["y"].asFloat() + tileMap->getTileSize().height / 2 + playerSpawnPoint["height"].asFloat());
 	player->init("player.png", 200, bulletPool, position);
-	addChild(player, 1);
+	addChild(player.get(), 1);
 
 	// Enemies
 	TMXObjectGroup * enemySpawnPoints = tileMap->getObjectGroup("EnemySpawnPoints");
@@ -89,11 +93,12 @@ bool isi::Game::init(bool trainingGame)
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		auto enemySpawnPoint = enemySpawnPoints->getObject("enemySpawnPoint" + std::to_string(RandomHelper::random_int(1, enemySpawnPointCount)));
-		Bot * enemy = new Bot(*this);
+		Bot* enemy = new Bot(*this);
+		enemy->autorelease();
 		Vec2 position = Vec2(enemySpawnPoint["x"].asFloat(),
 							 enemySpawnPoint["y"].asFloat() + tileMap->getTileSize().height / 2 + enemySpawnPoint["height"].asFloat());
 		enemy->init("enemy.png", 75, bulletPool, position);
-		enemies.push_back(enemy);
+		enemies.pushBack(enemy);
 		addChild(enemy, 1);
 	}
 
@@ -103,7 +108,7 @@ bool isi::Game::init(bool trainingGame)
 		// Load neural network generation from file
 		loadNeuralNetworkGeneration();
 		// Load random neural network for each bot
-		for (Bot* bot : enemies)
+		for (auto& bot : enemies)
 		{
 			int neuralNetworkIdx = cocos2d::RandomHelper::random_int((unsigned int)0, loadedNeuralNetworkGeneration.size() - 1);
 			bot->getSearchingNeuralNetwork().initWeights(loadedNeuralNetworkGeneration[neuralNetworkIdx]);
@@ -128,7 +133,7 @@ void isi::Game::restart()
 	player->setVisible(true);
 	
 	// restart enemy
-	for (Bot* enemy : enemies)
+	for (auto& enemy : enemies)
 	{
 		Vec2 newEnemyPosition = getRandomObjCoordsFromMapLayer("EnemySpawnPoints", "enemySpawnPoint");
 		enemy->setVisible(true);
@@ -191,7 +196,7 @@ void isi::Game::bulletCollisionWithBody(Bullet * bullet, PhysicsBody * body)
 int isi::Game::getAliveEnemiesCount()
 {
 	int aliveEnemiesCount = 0;
-	for (Character * enemy : enemies)
+	for (auto& enemy : enemies)
 		if (enemy->getHp() > 0) ++aliveEnemiesCount;
 	return aliveEnemiesCount;
 }
@@ -222,11 +227,11 @@ void isi::Game::move(Character & character, cocos2d::Vec2 direction)
 	character.updateHUDposition();
 }
 
-std::vector<Bot*> isi::Game::getActiveEnemies()
+cocos2d::Vector<Bot*> isi::Game::getActiveEnemies()
 {
-	std::vector<Bot*> activeEnemies;
-	for (Bot* bot : enemies)
-		if (bot->isActive()) activeEnemies.push_back(bot);
+	cocos2d::Vector<Bot*> activeEnemies;
+	for (auto& bot : enemies)
+		if (bot->isActive()) activeEnemies.pushBack(bot);
 
 	return activeEnemies;
 }
@@ -235,9 +240,9 @@ std::vector<cocos2d::PhysicsBody*> isi::Game::getAllPhysicsBodies()
 {
 	std::vector<cocos2d::PhysicsBody*> physicsBodies;
 	physicsBodies.push_back(player->getSprite()->getPhysicsBody());
-	for (auto* enemy : enemies)
+	for (auto& enemy : enemies)
 		physicsBodies.push_back(enemy->getSprite()->getPhysicsBody());
-	for (auto* bullet : getBulletPool()->getActiveBullets())
+	for (auto& bullet : getBulletPool()->getActiveBullets())
 		physicsBodies.push_back(bullet->getSprite()->getPhysicsBody());
 	return physicsBodies;
 }
@@ -246,20 +251,20 @@ void isi::Game::pause()
 {
 	paused = true;
 	player->pauseSchedulerAndActions();
-	for (Bot* bot : enemies) bot->pauseSchedulerAndActions();
+	for (auto& bot : enemies) bot->pauseSchedulerAndActions();
 }
 
 void isi::Game::unpause()
 {
 	paused = false;
 	player->resumeSchedulerAndActions();
-	for (Bot* bot : enemies) bot->resumeSchedulerAndActions();
+	for (auto& bot : enemies) bot->resumeSchedulerAndActions();
 }
 
 void isi::Game::loadNeuralNetworkGeneration()
 {
 	int generationSize = isi::Options::getInstance().generationSize;
-	int neuralNetworkWeightCount = enemies[0]->getSearchingNeuralNetwork().getNeuralNetworkWeights().size();
+	int neuralNetworkWeightCount = enemies.at(0)->getSearchingNeuralNetwork().getNeuralNetworkWeights().size();
 	std::ifstream generationFile("searching_generation.txt", std::ifstream::binary);
 	if (generationFile)
 	{

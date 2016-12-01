@@ -7,6 +7,7 @@ NeuralNetwork::NeuralNetwork(int hiddenLayerCount, int neuronsPerHiddenLayer,
 	: layerCount(hiddenLayerCount + 1), neuronsPerHiddenLayer(neuronsPerHiddenLayer),
 	inputCount(inputCount), outputCount(outputCount), fitness(0)
 {
+
 	if (hiddenLayerCount > 0)
 	{
 		// First hidden layer

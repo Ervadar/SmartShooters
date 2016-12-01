@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Character.h"
-#include "NeuralNetwork.h"
-#include "SearchingNeuralNetwork.h"
-#include "FightingNeuralNetwork.h"
+#include "Game/Character.h"
+#include "NeuralNetworks/NeuralNetwork.h"
+#include "NeuralNetworks/SearchingNeuralNetwork.h"
+#include "NeuralNetworks/FightingNeuralNetwork.h"
 #include "Options.h"
-#include "Sensor.h"
-#include "Character.h"
-#include "Genome.h"
+#include "Game/Sensor.h"
+#include "Game/Character.h"
+#include "Training/Genome.h"
 #include <vector>
 
 namespace isi { class Game; }
@@ -54,7 +54,7 @@ private:
 
 public:
 	Bot(isi::Game& game);
-	~Bot();
+	virtual ~Bot();
 	bool Bot::init(std::string spritePath, int hp, BulletPool & bulletPool, cocos2d::Vec2 position);
 	bool initNeuralNetworksRandomly();
 

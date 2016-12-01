@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "Game.h"
+#include "Game/Game.h"
 
 class GameScene : public cocos2d::Layer
 {

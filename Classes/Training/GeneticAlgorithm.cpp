@@ -14,13 +14,6 @@ void GeneticAlgorithm::init()
 
 	game.init(true);
 
-	// Load weights from file and override default random initialization
-	// TODO: ma byæ tylko if (options.lnn) -> jeœli true to prze³adowujemy losowe wagi (wczytane konstruktorami) podanymi
-	if (options.loadNeuralNetworks)
-	{
-		CCLOG("TODO: load weights from file into enemmies \n");
-	}
-
 	trainedNetwork = options.trainedNetwork;
 	generationSize = options.generationSize;
 	experimentTime = options.timeToSearch;
@@ -31,14 +24,14 @@ void GeneticAlgorithm::init()
 	eliteGenomes = options.searchingTrainEliteGenomes;
 	bestFitness = options.searchingTrainInitialFitness;
 
-	networkSplitPoints = game.getEnemies()[0]->getActiveNeuralNetwork()->calculateSplitPoints();
+	networkSplitPoints = game.getEnemies().at(0)->getActiveNeuralNetwork()->calculateSplitPoints();
 
 	setRunning(true);
 
 	generationNumber = 1;
 
 	// Clean fittest genome file
-	std::string fittestGenomesFilePath = "average_fitness.txt";
+	std::string fittestGenomesFilePath = "generations_fitness.txt";
 	std::ofstream fittestGenomesFile(fittestGenomesFilePath, std::ofstream::trunc);
 	fittestGenomesFile.close();
 
@@ -66,11 +59,11 @@ void GeneticAlgorithm::update(float delta)
 				game.restart();
 				if (generationNumber == 1)		// Generation 1 - keep initializing randomly
 				{
-					for (Bot* bot : game.getEnemies()) bot->initNeuralNetworksRandomly();
+					for (auto& bot : game.getEnemies()) bot->initNeuralNetworksRandomly();
 				}
 				else							// Generation > 1 - initialize from new genome generation
 				{
-					for (Bot* bot : game.getEnemies())
+					for (auto& bot : game.getEnemies())
 					{
 						bot->getActiveNeuralNetwork()->initWeights(newGeneration[newGenerationIdx].weights);
 						++newGenerationIdx;
@@ -276,12 +269,11 @@ void GeneticAlgorithm::saveGenerationToFile()
 	std::string filePath = ""; // cocos2d::FileUtils::sharedFileUtils()->getWritablePath();
 	if (trainedNetwork == isi::Options::SEARCHING_NEURAL_NETWORK) filePath += "searching/";
 	else if (trainedNetwork == isi::Options::FIGHTING_NEURAL_NETWORK) filePath += "fighting/";
-	std::string fittestGenomesFilePath = "average_fitness.txt";
+	std::string fittestGenomesFilePath = "generations_fitness.txt";
 	filePath += std::to_string(generationNumber) + ".txt";
 
-	CCLOG("PATH: %s", filePath.c_str());
 	std::ofstream fittestGenomesFile(fittestGenomesFilePath, std::ofstream::app);
-	fittestGenomesFile << averageFitness << "\n";
+	fittestGenomesFile << worstFitness << " " << averageFitness << " " << bestFitness << "\n";
 	fittestGenomesFile.close();
 	std::ofstream file(filePath);
 
@@ -294,5 +286,4 @@ void GeneticAlgorithm::saveGenerationToFile()
 		file << "\n";
 	}
 	file.close();
-	CCLOG("Finished saving");
 }

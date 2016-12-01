@@ -29,7 +29,7 @@ bool TrainBotsScene::init()
 	// Switch to first game (first enemy view)
 	isi::Game* game = geneticAlgorithm.getGame();
 	addChild(game, 1);
-	povCharacter = game->getActiveEnemies()[0];
+	povCharacter = game->getActiveEnemies().at(0);
 
 	// Create navigation panel
 	Vector<MenuItem*> navItems;
@@ -84,7 +84,7 @@ void TrainBotsScene::switchToCharacter(int indexDifference)
 	if (characterIndex == 0)		// player character
 		newPovCharacter = &(game->getPlayer());
 	else
-		newPovCharacter = enemies[characterIndex - 1];
+		newPovCharacter = enemies.at(characterIndex - 1);
 	activeCharacterIndex = characterIndex;
 	povCharacter = newPovCharacter;
 }

@@ -5,6 +5,10 @@ Entity::Entity()
 
 }
 
+Entity::~Entity()
+{
+}
+
 void Entity::activate()
 {
 	active = true;

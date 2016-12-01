@@ -1,7 +1,7 @@
 #include "GameScene.h"
 #include "MainMenuScene.h"
-#include "Game.h"
-#include "Bullet.h"
+#include "Game/Game.h"
+#include "Game/Bullet.h"
 #include "Options.h"
 #include "SimpleAudioEngine.h"
 
