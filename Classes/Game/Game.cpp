@@ -254,12 +254,16 @@ void isi::Game::unpause()
 
 void isi::Game::loadNeuralNetworkGeneration()
 {
-	int generationSize = isi::Options::getInstance().generationSize;
 	int neuralNetworkWeightCount = enemies.at(0)->getSearchingNeuralNetwork().getNeuralNetworkWeights().size();
 	std::ifstream generationFile("searching_generation.txt", std::ifstream::binary);
+	std::string line;
+	int lineCount = 0;
+	for (; std::getline(generationFile, line); ++lineCount);
+	generationFile.clear();
+	generationFile.seekg(0, std::ios::beg);
 	if (generationFile)
 	{
-		for (int i = 0; i < generationSize; ++i)
+		for (int i = 0; i < lineCount; ++i)
 		{
 			std::vector<double> singleNetwork;
 			for (int j = 0; j < neuralNetworkWeightCount; ++j)
