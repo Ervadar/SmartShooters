@@ -25,7 +25,7 @@ namespace isi
 		BulletPool bulletPool;
 
 		// Player
-		std::unique_ptr<Player> player;
+		Player * player;
 
 		// Enemies
 		cocos2d::Vector<Bot*> enemies;

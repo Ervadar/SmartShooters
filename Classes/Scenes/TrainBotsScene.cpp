@@ -64,7 +64,7 @@ bool TrainBotsScene::init()
 	scheduleUpdate();
 
 	// Stop music
-	CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+	//CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     
     return true;
 }

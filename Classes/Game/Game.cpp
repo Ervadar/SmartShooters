@@ -66,7 +66,7 @@ bool isi::Game::init(bool trainingGame)
 	Vec2 position = Vec2(playerSpawnPoint["x"].asFloat(),
 						 playerSpawnPoint["y"].asFloat() + tileMap->getTileSize().height / 2 + playerSpawnPoint["height"].asFloat());
 	player->init("player.png", 200, bulletPool, position);
-	addChild(player.get(), 1);
+	addChild(player, 1);
 
 	// Enemies
 	TMXObjectGroup * enemySpawnPoints = tileMap->getObjectGroup("EnemySpawnPoints");
